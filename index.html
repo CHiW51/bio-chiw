@@ -7,7 +7,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* รีเซ็ตค่าเริ่มต้น */
+        /* คงสไตล์เดิมไว้ */
         * {
             margin: 0;
             padding: 0;
@@ -18,12 +18,12 @@
         body {
             background-color: #1a1a1a;
             color: white;
-            height: 100vh;
+            min-height: 100vh; /* เปลี่ยนจาก height เป็น min-height */
             display: flex;
             justify-content: center;
             align-items: center;
             transition: opacity 0.5s ease;
-            overflow: hidden;
+            /* ลบ overflow: hidden เพื่อให้เลื่อนได้ */
         }
 
         .welcome-screen {
@@ -52,31 +52,24 @@
             color: #999;
         }
 
-        /* ปรับให้หน้าหลัง Welcome สามารถเลื่อนได้ */
         .main-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            height: 100vh;
-            width: 100%;
-            overflow-y: auto; /* ทำให้สามารถเลื่อนได้ */
-            padding: 20px 0;
-        }
-
-        .container {
-            min-height: 100vh; /* ทำให้ container สูงพอสำหรับการเลื่อน */
             text-align: center;
+            display: none;
+            animation: fadeIn 1.5s ease-in-out;
         }
 
         .profile-pic {
             width: 120px;
             height: 120px;
             border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             border: 3px solid white;
+            position: relative;
             overflow: hidden;
             transition: transform 0.3s ease;
-            margin: 0 auto;
         }
 
         .profile-pic img {
@@ -125,6 +118,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            padding-bottom: 20px; /* เพิ่ม padding เพื่อให้เนื้อหาไม่ชิดขอบล่าง */
         }
 
         .btn {
@@ -191,10 +185,11 @@
         const mainScreen = document.querySelector('.main-screen');
         const audio = document.getElementById('backgroundMusic');
 
+        // ฟังก์ชันจัดการการโต้ตอบครั้งแรก
         function handleInteraction() {
             welcomeScreen.style.display = 'none';
-            mainScreen.style.display = 'flex';
-
+            mainScreen.style.display = 'block';
+            
             audio.play().catch(function(error) {
                 console.log("การเล่นเพลงล้มเหลว: ", error);
             });
@@ -203,12 +198,14 @@
             document.removeEventListener('touchstart', handleInteraction);
         }
 
+        // ตรวจจับการคลิกหรือแตะครั้งแรก
         document.addEventListener('click', handleInteraction);
         document.addEventListener('touchstart', handleInteraction);
 
+        // จัดการเมื่อสลับแท็บหรือหน้าเว็บไม่ visible
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
-                audio.pause();
+                audio.pause(); // หยุดเพลงเมื่อสลับแท็บหรือหน้าไม่ visible
             } else {
                 audio.play().catch(function(error) {
                     console.log("การเล่นเพลงล้มเหลว: ", error);
@@ -216,15 +213,17 @@
             }
         });
 
+        // จัดการเมื่อผู้ใช้ปิดหน้าเว็บหรือเปลี่ยนหน้า
         window.addEventListener('beforeunload', function() {
-            audio.pause();
-            audio.currentTime = 0;
+            audio.pause(); // หยุดเพลงเมื่อออกจากหน้า
+            audio.currentTime = 0; // รีเซ็ตตำแหน่งเพลงเป็นจุดเริ่มต้น
         });
 
+        // จัดการคลิกปุ่มลิงก์ (ป้องกันการเปลี่ยนหน้าโดยไม่หยุดเพลง)
         document.querySelectorAll('.btn, .social-icons a').forEach(link => {
             link.addEventListener('click', function(e) {
-                if (this.getAttribute('href') !== '#') {
-                    audio.pause();
+                if (this.getAttribute('href') !== '#') { // ถ้าไม่ใช่ลิงก์ placeholder
+                    audio.pause(); // หยุดเพลงก่อนเปลี่ยนหน้า
                 }
             });
         });
