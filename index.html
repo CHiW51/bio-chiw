@@ -3,228 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Black Theme - Welcome</title>
+    <meta name="description" content="ยินดีต้อนรับสู่ chiw.xyz - โปรไฟล์ส่วนตัวของ @chiwwachirawit">
+    <meta name="keywords" content="chiwwachirawit, portfolio, blog, personal profile">
+    <meta name="author" content="chiwwachirawit">
+    <title>chiw.xyz - @chiwwachirawit</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
     <style>
-        /* คงสไตล์เดิมไว้ */
+        :root {
+            --gradient-dark: #1a1a1a;
+            --gradient-mid: #2d2d2d;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --accent-color: #00ffcc;
+            --secondary-color: #ff007a;
+            --text-color: #ffffff;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
         }
 
         body {
-            background-color: #1a1a1a;
-            color: white;
-            min-height: 100vh; /* เปลี่ยนจาก height เป็น min-height */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(45deg, var(--gradient-dark), var(--gradient-mid));
+            background-size: 200% 200%;
+            animation: gradientBG 10s ease infinite;
+            color: var(--text-color);
+            min-height: 100vh;
+            font-family: 'Poppins', Arial, sans-serif;
+            line-height: 1.6;
+            opacity: 0;
             transition: opacity 0.5s ease;
-            /* ลบ overflow: hidden เพื่อให้เลื่อนได้ */
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
         }
 
         .welcome-screen {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
             text-align: center;
-            animation: fadeIn 1.5s ease-in-out;
+            background: rgba(26, 26, 26, 0.95);
+            z-index: 20;
+            animation: fadeIn 1s ease-in-out;
         }
 
         @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
 
         .welcome-screen h1 {
-            font-size: 36px;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
+            font-size: clamp(2rem, 6vw, 3rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .welcome-screen p {
-            font-size: 18px;
-            margin-bottom: 30px;
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            color: #ddd;
         }
 
-        .welcome-screen .tap-hint {
-            font-size: 16px;
-            color: #999;
+        .tap-hint {
+            font-size: 1rem;
+            color: var(--accent-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
         }
 
         .main-screen {
-            text-align: center;
             display: none;
-            animation: fadeIn 1.5s ease-in-out;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        .fixed-header {
+            position: sticky;
+            top: 0;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 15px var(--shadow-color);
+            z-index: 10;
+            text-align: center;
         }
 
         .profile-pic {
-            width: 120px;
-            height: 120px;
+            --size: clamp(6rem, 15vw, 9rem);
+            width: var(--size);
+            height: var(--size);
             border-radius: 50%;
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 3px solid white;
-            position: relative;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--accent-color);
             overflow: hidden;
             transition: transform 0.3s ease;
         }
 
-        .profile-pic img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
         .profile-pic:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .username {
-            margin-top: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            animation: slideIn 1s ease-in-out;
-        }
-
-        @keyframes slideIn {
-            0% { transform: translateX(-20px); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
+            font-size: clamp(1.5rem, 4vw, 1.75rem);
+            font-weight: 600;
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .social-icons {
-            margin-top: 15px;
+            margin-top: 1rem;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 1.5rem;
         }
 
         .social-icons a {
-            color: white;
-            font-size: 24px;
+            color: var(--text-color);
+            font-size: 1.5rem;
             transition: color 0.3s ease, transform 0.3s ease;
         }
 
         .social-icons a:hover {
-            color: #444;
-            transform: translateY(-5px);
+            color: var(--accent-color);
+            transform: translateY(-3px);
         }
 
         .buttons {
-            margin-top: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding-bottom: 20px; /* เพิ่ม padding เพื่อให้เนื้อหาไม่ชิดขอบล่าง */
+            margin-top: 2rem;
+            display: grid;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 25rem;
+            margin-inline: auto;
         }
 
         .btn {
-            background-color: #333;
-            color: white;
-            padding: 15px 30px;
-            border: 2px solid white;
-            border-radius: 25px;
+            background: linear-gradient(45deg, #333, #444);
+            color: var(--text-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 1.5rem;
             text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .btn:hover {
-            background-color: #444;
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(68, 68, 68, 0.5);
+            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.2);
         }
 
-        .btn:active {
-            transform: translateY(0);
-            box-shadow: none;
+        .audio-control {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 15;
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(26, 26, 26, 0.9);
+            border-radius: 2rem;
+            padding: 0.5rem;
+        }
+
+        .audio-btn {
+            background: none;
+            color: var(--accent-color);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: color 0.3s ease;
+        }
+
+        .audio-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        @media (max-width: 600px) {
+            .buttons { padding: 0.75rem; }
+            .btn { padding: 0.6rem 1.25rem; font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
-    <div class="welcome-screen">
-        <h1>ยินดีต้อนรับ!</h1>
-        <p>สู่ chiw.xyz</p>
-        <p class="tap-hint">กรุณาคลิกหรือแตะที่หน้าจอเพื่อเริ่มต้น</p>
-    </div>
-
-    <div class="main-screen">
-        <div class="container">
-            <div class="profile-pic">
-                <img src="profile.jpg" alt="Profile Picture">
-            </div>
-            <h1 class="username">@chiwwachirawit</h1>
-            <div class="social-icons">
-                <a href="https://www.facebook.com/chiwwachirawit/"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/chiw.wwwwwwww/"><i class="fab fa-instagram"></i></a>
-                <a href="https://www.tiktok.com/@chiwwachirawit"><i class="fab fa-tiktok"></i></a>
-            </div>
-            <div class="buttons">
-                <a href="#" class="btn">-</a>
-                <a href="#" class="btn">-</a>
-                <a href="#" class="btn">-</a>
-                <a href="#" class="btn">-</a>
-                <a href="#" class="btn">-</a>        
-            </div>
+    <canvas id="particles" aria-hidden="true"></canvas>
+    <div class="welcome-screen" role="dialog" aria-label="หน้าจอต้อนรับ">
+        <div>
+            <h1>ยินดีต้อนรับ!</h1>
+            <p>สู่ chiw.xyz</p>
+            <p class="tap-hint">คลิกหรือแตะเพื่อเริ่มต้น</p>
         </div>
     </div>
 
-    <audio id="backgroundMusic" loop>
+    <div class="main-screen">
+        <header class="fixed-header">
+            <div class="profile-pic">
+                <img src="profile.jpg" alt="รูปโปรไฟล์ของ @chiwwachirawit" loading="lazy" onerror="this.src='default-profile.jpg'">
+            </div>
+            <h1 class="username">@chiwwachirawit</h1>
+            <nav class="social-icons" aria-label="โซเชียลมีเดีย">
+                <a href="https://www.facebook.com/chiwwachirawit/" target="_blank" rel="noopener noreferrer" aria-label="Facebook ของ chiwwachirawit"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/chiw.wwwwwwww/" target="_blank" rel="noopener noreferrer" aria-label="Instagram ของ chiwwachirawit"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@chiwwachirawit" target="_blank" rel="noopener noreferrer" aria-label="TikTok ของ chiwwachirawit"><i class="fab fa-tiktok"></i></a>
+            </nav>
+        </header>
+        <section class="buttons" aria-label="ลิงก์เมนู">
+            <a href="#" class="btn">-</a>
+            <a href="#" class="btn">-</a>
+            <a href="#" class="btn">-</a>
+            <a href="#" class="btn">-</a>
+        </section>
+    </div>
+
+    <audio id="backgroundMusic" loop preload="metadata">
         <source src="music.mp3" type="audio/mp3">
-        เบราว์เซอร์ของคุณไม่สนับสนุนการเล่นเพลง
+        เบราว์เซอร์ของคุณไม่รองรับไฟล์เสียง
     </audio>
 
+    <div class="audio-control" aria-label="การควบคุมเสียง">
+        <button class="audio-btn" id="muteBtn" aria-label="เปิด/ปิดเสียง"><i class="fas fa-volume-up"></i></button>
+    </div>
+
     <script>
+        'use strict';
+
+        // Particle Animation
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d', { alpha: true });
+        let particlesArray = [];
+        const maxParticles = Math.min(50, window.innerWidth / 20);
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.3 - 0.15;
+                this.speedY = Math.random() * 0.3 - 0.15;
+                this.life = Math.random() * 80 + 40;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life--;
+                if (this.life <= 0 || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(0, 255, 204, ${this.life / 100})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particlesArray = Array.from({ length: maxParticles }, () => new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // Core Functionality
         const welcomeScreen = document.querySelector('.welcome-screen');
         const mainScreen = document.querySelector('.main-screen');
         const audio = document.getElementById('backgroundMusic');
+        const muteBtn = document.getElementById('muteBtn');
+        let isMuted = localStorage.getItem('isMuted') === 'true';
 
-        // ฟังก์ชันจัดการการโต้ตอบครั้งแรก
-        function handleInteraction() {
-            welcomeScreen.style.display = 'none';
-            mainScreen.style.display = 'block';
-            
-            audio.play().catch(function(error) {
-                console.log("การเล่นเพลงล้มเหลว: ", error);
-            });
-
-            document.removeEventListener('click', handleInteraction);
-            document.removeEventListener('touchstart', handleInteraction);
+        function updateAudio() {
+            muteBtn.innerHTML = `<i class="fas fa-volume-${isMuted ? 'mute' : 'up'}"></i>`;
+            audio.muted = isMuted;
+            !isMuted && audio.play().catch(() => {});
+            localStorage.setItem('isMuted', isMuted);
         }
 
-        // ตรวจจับการคลิกหรือแตะครั้งแรก
-        document.addEventListener('click', handleInteraction);
-        document.addEventListener('touchstart', handleInteraction);
+        function showMainScreen() {
+            welcomeScreen.style.animation = 'fadeOut 0.5s ease forwards';
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+                mainScreen.style.display = 'block';
+                updateAudio();
+            }, 500);
+        }
 
-        // จัดการเมื่อสลับแท็บหรือหน้าเว็บไม่ visible
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                audio.pause(); // หยุดเพลงเมื่อสลับแท็บหรือหน้าไม่ visible
-            } else {
-                audio.play().catch(function(error) {
-                    console.log("การเล่นเพลงล้มเหลว: ", error);
-                });
-            }
-        });
+        ['click', 'touchstart'].forEach(evt => 
+            welcomeScreen.addEventListener(evt, showMainScreen, { once: true, passive: true })
+        );
 
-        // จัดการเมื่อผู้ใช้ปิดหน้าเว็บหรือเปลี่ยนหน้า
-        window.addEventListener('beforeunload', function() {
-            audio.pause(); // หยุดเพลงเมื่อออกจากหน้า
-            audio.currentTime = 0; // รีเซ็ตตำแหน่งเพลงเป็นจุดเริ่มต้น
-        });
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            updateAudio();
+        }, { passive: true });
 
-        // จัดการคลิกปุ่มลิงก์ (ป้องกันการเปลี่ยนหน้าโดยไม่หยุดเพลง)
-        document.querySelectorAll('.btn, .social-icons a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                if (this.getAttribute('href') !== '#') { // ถ้าไม่ใช่ลิงก์ placeholder
-                    audio.pause(); // หยุดเพลงก่อนเปลี่ยนหน้า
-                }
-            });
-        });
+        document.addEventListener('visibilitychange', () => {
+            document.hidden ? audio.pause() : !isMuted && audio.play().catch(() => {});
+        }, { passive: true });
+
+        window.addEventListener('resize', () => {
+            initParticles();
+        }, { passive: true });
+
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '1';
+            updateAudio();
+        }, { passive: true });
     </script>
 </body>
 </html>
