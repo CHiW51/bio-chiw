@@ -125,6 +125,15 @@
             border: 3px solid var(--accent-color);
             overflow: hidden;
             transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
         }
 
         .profile-pic:hover {
@@ -252,6 +261,41 @@
         เบราว์เซอร์ของคุณไม่รองรับไฟล์เสียง
     </audio>
 
+    <!-- MediaSession API Integration (ใช้ขนาดเดียว) -->
+    <script>
+        if ('mediaSession' in navigator) {
+            const audio = document.getElementById('backgroundMusic');
+            
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: '𝓬𝓱𝓲𝔀.𝔁𝔂𝔃 - @𝓬𝓱𝓲𝔀𝔀𝓪𝓬𝓱𝓲𝓻𝓪𝔀𝓲𝓽',
+                artist: 'ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴄʜɪᴡ.xʏᴢ',
+                album: 'Personal Profile',
+                artwork: [
+                    { src: 'artwork.jpg', sizes: '256x256', type: 'image/jpeg' }
+                ]
+            });
+
+            navigator.mediaSession.setActionHandler('play', () => {
+                audio.play().catch(() => {});
+                isMuted = false;
+                updateAudio();
+            });
+
+            navigator.mediaSession.setActionHandler('pause', () => {
+                audio.pause();
+                isMuted = true;
+                updateAudio();
+            });
+
+            navigator.mediaSession.setActionHandler('stop', () => {
+                audio.pause();
+                audio.currentTime = 0;
+                isMuted = true;
+                updateAudio();
+            });
+        }
+    </script>
+
     <div class="audio-control" aria-label="การควบคุมเสียง">
         <button class="audio-btn" id="muteBtn" aria-label="เปิด/ปิดเสียง"><i class="fas fa-volume-up"></i></button>
     </div>
@@ -320,6 +364,9 @@
             audio.muted = isMuted;
             !isMuted && audio.play().catch(() => {});
             localStorage.setItem('isMuted', isMuted);
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.playbackState = isMuted ? 'paused' : 'playing';
+            }
         }
 
         function showMainScreen() {
