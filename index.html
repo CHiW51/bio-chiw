@@ -45,6 +45,12 @@
             100% { background-position: 0% 50%; }
         }
 
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         #particles {
             position: fixed;
             inset: 0;
@@ -80,6 +86,11 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            transition: text-shadow 0.3s ease;
+        }
+
+        .welcome-screen h1:hover {
+            text-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
         }
 
         .welcome-screen p {
@@ -124,7 +135,7 @@
             margin: 0 auto 1rem;
             border: 3px solid var(--accent-color);
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             position: relative;
         }
 
@@ -137,16 +148,25 @@
         }
 
         .profile-pic:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+            border-color: var(--secondary-color);
         }
 
         .username {
             font-size: clamp(1.5rem, 4vw, 1.75rem);
             font-weight: 600;
-            background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+            background: linear-gradient(45deg, #00ffcc, #ff007a, #7a00ff, #00ffcc);
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            transition: text-shadow 0.3s ease;
+            animation: gradientText 8s ease infinite;
+        }
+
+        .username:hover {
+            text-shadow: 0 0 15px rgba(0, 255, 204, 0.5), 0 0 25px rgba(255, 0, 122, 0.5);
         }
 
         .social-icons {
@@ -159,12 +179,29 @@
         .social-icons a {
             color: var(--text-color);
             font-size: 1.5rem;
-            transition: color 0.3s ease, transform 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .social-icons a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: var(--accent-color);
+            transition: all 0.3s ease;
         }
 
         .social-icons a:hover {
             color: var(--accent-color);
-            transform: translateY(-3px);
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        .social-icons a:hover::after {
+            width: 100%;
+            left: 0;
         }
 
         .buttons {
@@ -185,12 +222,30 @@
             font-size: 1rem;
             font-weight: 600;
             text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(0, 255, 204, 0.3), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.2);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
+            color: var(--accent-color);
         }
 
         .audio-control {
@@ -213,11 +268,15 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 1.25rem;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .audio-btn:hover {
             color: var(--secondary-color);
+            transform: scale(1.2);
+            background: rgba(255, 0, 122, 0.1);
+            box-shadow: 0 0 10px rgba(255, 0, 122, 0.3);
         }
 
         @media (max-width: 600px) {
@@ -261,22 +320,44 @@
         เบราว์เซอร์ของคุณไม่รองรับไฟล์เสียง
     </audio>
 
-    <!-- MediaSession API Integration (ใช้ขนาดเดียว) -->
+    <div class="audio-control" aria-label="การควบคุมเสียง">
+        <button class="audio-btn" id="muteBtn" aria-label="เปิด/ปิดเสียง"><i class="fas fa-volume-up"></i></button>
+    </div>
+
     <script>
+        'use strict';
+
+        // MediaSession API Integration
         if ('mediaSession' in navigator) {
             const audio = document.getElementById('backgroundMusic');
-            
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: '𝓬𝓱𝓲𝔀.𝔁𝔂𝔃 - @𝓬𝓱𝓲𝔀𝔀𝓪𝓬𝓱𝓲𝓻𝓪𝔀𝓲𝓽',
-                artist: 'ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴄʜɪᴡ.xʏᴢ',
-                album: 'Personal Profile',
-                artwork: [
-                    { src: 'artwork.jpg', sizes: '256x256', type: 'image/jpeg' }
-                ]
+
+            audio.addEventListener('loadedmetadata', () => {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: 'chiw.xyz - @chiwwachirawit',
+                    artist: 'Welcome to chiw.xyz',
+                    album: 'Personal Profile',
+                    artwork: [
+                        { src: '/artwork-96.jpg', sizes: '96x96', type: 'image/jpeg' },
+                        { src: '/artwork-128.jpg', sizes: '128x128', type: 'image/jpeg' },
+                        { src: '/artwork-192.jpg', sizes: '192x192', type: 'image/jpeg' },
+                        { src: '/artwork-256.jpg', sizes: '256x256', type: 'image/jpeg' },
+                        { src: '/artwork-384.jpg', sizes: '384x384', type: 'image/jpeg' },
+                        { src: '/artwork-512.jpg', sizes: '512x512', type: 'image/jpeg' }
+                    ]
+                });
+                console.log('MediaSession metadata set');
+            });
+
+            audio.addEventListener('error', (e) => {
+                console.error('Audio load error:', e);
             });
 
             navigator.mediaSession.setActionHandler('play', () => {
-                audio.play().catch(() => {});
+                audio.play().then(() => {
+                    console.log('Audio playing');
+                }).catch((error) => {
+                    console.error('Play error:', error);
+                });
                 isMuted = false;
                 updateAudio();
             });
@@ -293,15 +374,9 @@
                 isMuted = true;
                 updateAudio();
             });
+        } else {
+            console.warn('MediaSession API not supported');
         }
-    </script>
-
-    <div class="audio-control" aria-label="การควบคุมเสียง">
-        <button class="audio-btn" id="muteBtn" aria-label="เปิด/ปิดเสียง"><i class="fas fa-volume-up"></i></button>
-    </div>
-
-    <script>
-        'use strict';
 
         // Particle Animation
         const canvas = document.getElementById('particles');
@@ -362,7 +437,9 @@
         function updateAudio() {
             muteBtn.innerHTML = `<i class="fas fa-volume-${isMuted ? 'mute' : 'up'}"></i>`;
             audio.muted = isMuted;
-            !isMuted && audio.play().catch(() => {});
+            !isMuted && audio.play().catch((error) => {
+                console.error('Audio play error:', error);
+            });
             localStorage.setItem('isMuted', isMuted);
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.playbackState = isMuted ? 'paused' : 'playing';
@@ -377,6 +454,18 @@
                 updateAudio();
             }, 500);
         }
+
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = button.getAttribute('href');
+                button.classList.add('hovered');
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 600);
+            });
+        });
 
         ['click', 'touchstart'].forEach(evt => 
             welcomeScreen.addEventListener(evt, showMainScreen, { once: true, passive: true })
