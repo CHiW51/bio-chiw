@@ -76,6 +76,15 @@
             background: #acb6e5;
         }
 
+        .guest-btn {
+            background: #acb6e5;
+            margin-top: 10px;
+        }
+
+        .guest-btn:hover {
+            background: #74ebd5;
+        }
+
         .error {
             color: red;
             text-align: center;
@@ -142,6 +151,16 @@
             outline: none;
         }
 
+        .guest-mode select {
+            pointer-events: none;
+            background: #f5f5f5;
+            color: #555;
+        }
+
+        .guest-mode .logout-btn {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             table, thead, tbody, th, td, tr {
                 display: block;
@@ -174,13 +193,14 @@
             <h2>ล็อกอิน</h2>
             <div class="input-group">
                 <label for="username">ชื่อผู้ใช้</label>
-                <input type="text" id="username" placeholder="กรอกชื่อผู้ใช้" required>
+                <input type="text" id="username" placeholder="กรอกชื่อผู้ใช้ (admin)" required>
             </div>
             <div class="input-group">
                 <label for="password">รหัสผ่าน</label>
                 <input type="password" id="password" placeholder="กรอกรหัสผ่าน" required>
             </div>
-            <button type="submit" class="btn">เข้าสู่ระบบ</button>
+            <button type="submit" class="btn">เข้าสู่ระบบ (ผู้ดูแล)</button>
+            <button type="button" class="btn guest-btn" onclick="loginAsGuest()">เข้าสู่ระบบในฐานะผู้เยี่ยมชม</button>
             <p id="errorMsg" class="error"></p>
         </form>
     </div>
@@ -232,7 +252,7 @@
             const dashboardContainer = document.getElementById('dashboardContainer');
 
             // ตรวจสอบว่าล็อกอินแล้วหรือไม่
-            if (localStorage.getItem('isLoggedIn') === 'true') {
+            if (localStorage.getItem('isLoggedIn') === 'true' || localStorage.getItem('isGuest') === 'true') {
                 loginContainer.style.display = 'none';
                 dashboardContainer.style.display = 'block';
                 // โหลดข้อมูลจาก localStorage หรือใช้ข้อมูลเริ่มต้น
@@ -245,7 +265,7 @@
                 dashboardContainer.style.display = 'none';
             }
 
-            // ระบบล็อกอิน
+            // ระบบล็อกอิน (สำหรับผู้ดูแล)
             const loginForm = document.getElementById('loginForm');
             if (loginForm) {
                 loginForm.addEventListener('submit', (e) => {
@@ -254,11 +274,13 @@
                     const password = document.getElementById('password').value;
                     const errorMsg = document.getElementById('errorMsg');
 
-                    // ตัวอย่างการตรวจสอบ (กำหนด username: admin, password: 1234)
+                    // ตรวจสอบรหัสผู้ดูแล
                     if (username === 'admin' && password === '1234') {
                         localStorage.setItem('isLoggedIn', 'true');
+                        localStorage.removeItem('isGuest');
                         loginContainer.style.display = 'none';
                         dashboardContainer.style.display = 'block';
+                        dashboardContainer.classList.remove('guest-mode');
                         // โหลดข้อมูลจาก localStorage หรือใช้ข้อมูลเริ่มต้น
                         if (!localStorage.getItem('students')) {
                             localStorage.setItem('students', JSON.stringify(initialStudents));
@@ -271,10 +293,25 @@
             }
         });
 
+        // ล็อกอินในฐานะผู้เยี่ยมชม
+        function loginAsGuest() {
+            localStorage.setItem('isGuest', 'true');
+            localStorage.removeItem('isLoggedIn');
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('dashboardContainer').style.display = 'block';
+            document.getElementById('dashboardContainer').classList.add('guest-mode');
+            // โหลดข้อมูลจาก localStorage หรือใช้ข้อมูลเริ่มต้น
+            if (!localStorage.getItem('students')) {
+                localStorage.setItem('students', JSON.stringify(initialStudents));
+            }
+            loadStudents();
+        }
+
         // โหลดข้อมูลนักเรียนลงตาราง
         function loadStudents() {
             const students = JSON.parse(localStorage.getItem('students'));
             const tbody = document.getElementById('paymentList');
+            const isGuest = localStorage.getItem('isGuest') === 'true';
             tbody.innerHTML = '';
             students.forEach((student, index) => {
                 const row = document.createElement('tr');
@@ -283,10 +320,12 @@
                     <td data-label="รหัสประจำตัว">${student.id}</td>
                     <td data-label="ชื่อ - นามสกุล">${student.name}</td>
                     <td data-label="สถานะการชำระเงิน">
-                        <select onchange="updateStatus(${index}, this.value)">
-                            <option value="ยังไม่จ่าย" ${student.status === 'ยังไม่จ่าย' ? 'selected' : ''}>ยังไม่จ่าย</option>
-                            <option value="จ่ายแล้ว" ${student.status === 'จ่ายแล้ว' ? 'selected' : ''}>จ่ายแล้ว</option>
-                        </select>
+                        ${isGuest 
+                            ? `<span>${student.status}</span>` 
+                            : `<select onchange="updateStatus(${index}, this.value)">
+                                <option value="ยังไม่จ่าย" ${student.status === 'ยังไม่จ่าย' ? 'selected' : ''}>ยังไม่จ่าย</option>
+                                <option value="จ่ายแล้ว" ${student.status === 'จ่ายแล้ว' ? 'selected' : ''}>จ่ายแล้ว</option>
+                            </select>`}
                     </td>
                     <td data-label="การจัดการ"></td>
                 `;
@@ -294,8 +333,9 @@
             });
         }
 
-        // อัปเดตสถานะการชำระเงินและบันทึกลง localStorage
+        // อัปเดตสถานะการชำระเงินและบันทึกลง localStorage (สำหรับผู้ดูแลเท่านั้น)
         function updateStatus(index, status) {
+            if (localStorage.getItem('isGuest') === 'true') return; // ป้องกันผู้เยี่ยมชมแก้ไข
             let students = JSON.parse(localStorage.getItem('students'));
             students[index].status = status;
             localStorage.setItem('students', JSON.stringify(students));
@@ -305,11 +345,13 @@
         // ออกจากระบบ
         function logout() {
             localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('isGuest');
             document.getElementById('loginContainer').style.display = 'block';
             document.getElementById('dashboardContainer').style.display = 'none';
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
             document.getElementById('errorMsg').textContent = '';
+            document.getElementById('dashboardContainer').classList.remove('guest-mode');
         }
     </script>
 </body>
