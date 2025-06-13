@@ -113,6 +113,27 @@
             color: #333;
         }
 
+        .menu-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .menu-btn {
+            padding: 10px 20px;
+            background: #74ebd5;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .menu-btn:hover {
+            background: #acb6e5;
+        }
+
         .logout-btn {
             width: auto;
             padding: 10px 20px;
@@ -184,6 +205,13 @@
                 font-weight: bold;
                 color: #333;
             }
+            .menu-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .menu-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -210,6 +238,10 @@
             <h1>ระบบเช็คสถานะการชำระเงิน</h1>
             <button class="btn logout-btn" onclick="logout()">ออกจากระบบ</button>
         </header>
+        <div class="menu-buttons">
+            <button class="menu-btn" onclick="showAll()">แสดงทั้งหมด</button>
+            <button class="menu-btn" onclick="showUnpaid()">แสดงเฉพาะยังไม่จ่าย</button>
+        </div>
         <table id="paymentTable">
             <thead>
                 <tr>
@@ -275,7 +307,7 @@
                     const errorMsg = document.getElementById('errorMsg');
 
                     // ตรวจสอบรหัสผู้ดูแล
-                    if (username === 'chiw' && password === 'chiw2008') {
+                    if (username === 'admin' && password === '1234') {
                         localStorage.setItem('isLoggedIn', 'true');
                         localStorage.removeItem('isGuest');
                         loginContainer.style.display = 'none';
@@ -308,12 +340,19 @@
         }
 
         // โหลดข้อมูลนักเรียนลงตาราง
-        function loadStudents() {
+        function loadStudents(filter = 'all') {
             const students = JSON.parse(localStorage.getItem('students'));
             const tbody = document.getElementById('paymentList');
             const isGuest = localStorage.getItem('isGuest') === 'true';
             tbody.innerHTML = '';
-            students.forEach((student, index) => {
+            let filteredStudents = students;
+            
+            // กรองเฉพาะนักเรียนที่ยังไม่ได้จ่าย
+            if (filter === 'unpaid') {
+                filteredStudents = students.filter(student => student.status === 'ยังไม่จ่าย');
+            }
+
+            filteredStudents.forEach((student, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td data-label="ลำดับ">${index + 1}</td>
@@ -331,6 +370,16 @@
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        // แสดงรายชื่อทั้งหมด
+        function showAll() {
+            loadStudents('all');
+        }
+
+        // แสดงเฉพาะนักเรียนที่ยังไม่ได้จ่าย
+        function showUnpaid() {
+            loadStudents('unpaid');
         }
 
         // อัปเดตสถานะการชำระเงินและบันทึกลง localStorage (สำหรับผู้ดูแลเท่านั้น)
